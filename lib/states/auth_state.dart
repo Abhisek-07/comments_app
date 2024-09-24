@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:comments_app/utils/app_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +18,8 @@ class AuthState extends _$AuthState {
   }
 
   // Sign up with email and password
-  Future<User?> signUpWithEmailPassword(String email, String password) async {
+  Future<User?> signUpWithEmailPassword(
+      String email, String password, String userName) async {
     String message = '';
     try {
       UserCredential userCredential =
@@ -26,6 +28,10 @@ class AuthState extends _$AuthState {
         password: password,
       );
       log("User signed up: ${userCredential.user?.uid}");
+      User? user = userCredential.user;
+      await FirebaseFirestore.instance.collection('users').doc(user?.uid).set(
+        {'name': userName, 'email': email},
+      );
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

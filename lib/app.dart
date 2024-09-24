@@ -1,5 +1,6 @@
 import 'package:comments_app/ui/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
@@ -11,6 +12,15 @@ class App extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent, // Make the status bar transparent
+        statusBarIconBrightness:
+            Brightness.dark, // Use dark icons for light backgrounds
+        statusBarBrightness:
+            Brightness.light, // On iOS, set the brightness to light
+      ),
+    );
     return Listener(
       behavior: HitTestBehavior.opaque,
       onPointerUp: (_) {
@@ -39,6 +49,7 @@ class App extends StatelessWidget {
           //
           // This works for code too, not just values: Most code changes can be
           // tested with just a hot reload.
+          appBarTheme: const AppBarTheme(),
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),

@@ -18,8 +18,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
 
   bool isSignUp = false;
 
@@ -46,12 +45,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     return null;
   }
 
-  String? _validateConfirmPassword(String? value) {
+  String? _validateUserName(String? value) {
     if (isSignUp) {
-      if (value != _passwordController.text) {
-        return 'Passwords do not match';
-      } else if (value == null || value.isEmpty) {
-        return "Please confirm your password";
+      if (value == null || value.isEmpty) {
+        return "Please enter your user name";
       }
     }
     return null;
@@ -66,7 +63,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         // Handle sign up logic
         // Use FirebaseAuthService for Sign Up
         User? user = await authProvider.signUpWithEmailPassword(
-            _emailController.text, _passwordController.text);
+          _emailController.text,
+          _passwordController.text,
+          _userNameController.text,
+        );
         context.loaderOverlay.hide();
         if (user != null) {
           log("User signed up successfully");
@@ -102,7 +102,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       _formKey.currentState!.reset();
       _emailController.clear();
       _passwordController.clear();
-      _confirmPasswordController.clear();
+      _userNameController.clear();
     });
   }
 
@@ -110,112 +110,143 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _userNameController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Form(
-            key: _formKey,
-            autovalidateMode: AutovalidateMode.disabled,
-            child: Column(
+      extendBodyBehindAppBar: true,
+      bottomNavigationBar: SafeArea(
+          child: Padding(
+        padding: MediaQuery.of(context).viewInsets +
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+              onPressed: _submitForm,
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                isSignUp ? 'Signup' : 'Login',
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Toggle between Sign In and Sign Up
+            Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 100), // Space at the top
-                // Illustration image
-                // Padding(
-                //   padding: const EdgeInsets.all(16.0),
-                //   child: Image.asset(
-                //     'assets/illustrations/user_illustration.webp', // Replace with your own illustration
-                //     height: 150,
-                //   ),
-                // ),
-                const SizedBox(height: 20),
-                // Title for the app (replace with your app name)
                 Text(
-                  isSignUp ? 'Create Account' : 'Welcome Back',
+                  isSignUp ? "Already have an account?" : "New here?",
                   style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 40),
-                // Email input
-                TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  controller: _emailController,
-                  validator: _validateEmail,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+                const SizedBox(
+                  width: 8,
                 ),
-                const SizedBox(height: 20),
-                // Password input
-                TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: _validatePassword,
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Confirm Password (only for Sign Up)
-                if (isSignUp)
-                  TextFormField(
-                    controller: _confirmPasswordController,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: _validateConfirmPassword,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Confirm Password',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 30),
-                // Sign In / Sign Up Button
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    isSignUp ? 'Create Account' : 'Sign In',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                // Toggle between Sign In and Sign Up
                 TextButton(
                   onPressed: _toggleFormType,
+                  style: TextButton.styleFrom(
+                    minimumSize: Size.zero,
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
                   child: Text(
-                    isSignUp
-                        ? "Already have an account? Sign In"
-                        : "No account? Register",
+                    isSignUp ? "Login" : "Signup",
                     style: const TextStyle(color: Colors.blue),
                   ),
                 ),
-                const SizedBox(height: 20),
               ],
             ),
+          ],
+        ),
+      )),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 16,
+              ),
+              Text(
+                'Comments',
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Expanded(
+                child: Center(
+                  child: Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.disabled,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // user name field
+                        if (isSignUp) ...[
+                          TextFormField(
+                            controller: _userNameController,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: _validateUserName,
+                            decoration: InputDecoration(
+                              labelText: 'Name',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        // Email input
+                        TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          controller: _emailController,
+                          validator: _validateEmail,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Password input
+                        TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: _validatePassword,
+                          controller: _passwordController,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Sign In / Sign Up Button
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

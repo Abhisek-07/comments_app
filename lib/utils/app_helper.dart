@@ -12,7 +12,7 @@ class AppHelper {
     return Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.SNACKBAR,
+      gravity: ToastGravity.TOP,
       backgroundColor: alertType == AlertType.error ? Colors.red : Colors.green,
       textColor: Colors.white,
       fontSize: 14.0,
