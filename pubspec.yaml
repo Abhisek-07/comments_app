@@ -43,6 +43,7 @@ dependencies:
   flutter_riverpod: ^2.5.1
   riverpod_annotation: ^2.3.5
   loader_overlay: ^4.0.2+1
+  cloud_firestore: ^5.4.2
 
 dev_dependencies:
   flutter_test:
