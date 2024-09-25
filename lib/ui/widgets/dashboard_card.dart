@@ -4,9 +4,11 @@ import 'package:comments_app/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class DashboardCard extends StatelessWidget {
-  const DashboardCard({super.key, required this.comment});
+  const DashboardCard(
+      {super.key, required this.comment, required this.maskEmail});
 
   final Comment comment;
+  final bool maskEmail;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +68,10 @@ class DashboardCard extends StatelessWidget {
                         ),
                       ),
                       Flexible(
-                        child: Text(comment.email,
+                        child: Text(
+                            maskEmail
+                                ? comment.email.getMaskedEmail
+                                : comment.email,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 color: Colors.black,

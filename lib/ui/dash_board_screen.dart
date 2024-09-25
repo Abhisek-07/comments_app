@@ -1,3 +1,5 @@
+import 'package:comments_app/firebase/remote_config/firebase_remote_config_keys.dart';
+import 'package:comments_app/firebase/remote_config/firebase_remote_config_service.dart';
 import 'package:comments_app/states/auth_state.dart';
 import 'package:comments_app/states/dashboard_state.dart';
 import 'package:comments_app/ui/widgets/dashboard_card.dart';
@@ -13,6 +15,9 @@ class DashBoard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final remoteConfig = FirebaseRemoteConfigService();
+    var maskEmail =
+        useState(remoteConfig.getBool(FirebaseRemoteConfigKeys.maskEmail));
     final AuthState authState = ref.watch(authStateProvider.notifier);
 
     final DashboardStateModel dashboardStateModel =
@@ -34,7 +39,10 @@ class DashBoard extends HookConsumerWidget {
       appBar: AppBar(
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.settings),
+            icon: const Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
             onSelected: (value) async {
               if (value == 'logout') {
                 context.loaderOverlay.show();
@@ -66,19 +74,16 @@ class DashBoard extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // dashboardStateModel.currentUser.when(
-            //   data: (data) {
-            //     return Text(
-            //         (data?.userName ?? "null") + " " + (data?.email ?? "NULL"));
-            //   },
-            //   error: (error, stackTrace) {
-            //     return const SizedBox.shrink();
-            //   },
-            //   loading: () {
-            //     return const Expanded(
-            //         child: Center(child: CircularProgressIndicator()));
-            //   },
-            // ),
+            const SizedBox(
+              height: 16,
+            ),
+            ElevatedButton(
+                onPressed: () async {
+                  await remoteConfig.fetchAndActivate();
+                  maskEmail.value =
+                      remoteConfig.getBool(FirebaseRemoteConfigKeys.maskEmail);
+                },
+                child: Text("Mask email with Remote Config")),
             dashboardStateModel.comments.when(
               data: (data) {
                 return Flexible(
@@ -91,7 +96,10 @@ class DashBoard extends HookConsumerWidget {
                     },
                     itemCount: data.length,
                     itemBuilder: (context, index) {
-                      return DashboardCard(comment: data[index]);
+                      return DashboardCard(
+                        comment: data[index],
+                        maskEmail: maskEmail.value,
+                      );
                     },
                   ),
                 );
