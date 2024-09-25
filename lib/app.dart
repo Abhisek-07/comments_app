@@ -1,4 +1,5 @@
 import 'package:comments_app/ui/splash_screen.dart';
+import 'package:comments_app/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -50,7 +51,8 @@ class App extends StatelessWidget {
           // This works for code too, not just values: Most code changes can be
           // tested with just a hot reload.
           appBarTheme: const AppBarTheme(),
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          scaffoldBackgroundColor: AppColors.colorGreyScaleWhite,
+          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.appBlue),
           useMaterial3: true,
         ),
         home: const GlobalLoaderOverlay(child: SplashScreen()),

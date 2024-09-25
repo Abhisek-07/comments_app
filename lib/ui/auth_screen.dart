@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:comments_app/states/auth_state.dart';
+import 'package:comments_app/ui/widgets/formfield_widget.dart';
+import 'package:comments_app/utils/app_colors.dart';
 import 'package:comments_app/utils/app_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -128,18 +130,23 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             ElevatedButton(
               onPressed: _submitForm,
               style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.appBlue,
+                elevation: 0,
                 padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 60),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
               child: Text(
                 isSignUp ? 'Signup' : 'Login',
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             // Toggle between Sign In and Sign Up
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -163,11 +170,16 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                   child: Text(
                     isSignUp ? "Login" : "Signup",
-                    style: const TextStyle(color: Colors.blue),
+                    style: const TextStyle(
+                      color: AppColors.appBlue,
+                    ),
                   ),
                 ),
               ],
             ),
+            const SizedBox(
+              height: 16,
+            )
           ],
         ),
       )),
@@ -182,12 +194,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               const SizedBox(
                 height: 16,
               ),
-              Text(
+              const Text(
                 'Comments',
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.appBlue),
               ),
               Expanded(
                 child: Center(
@@ -199,45 +211,26 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       children: [
                         // user name field
                         if (isSignUp) ...[
-                          TextFormField(
+                          FormfieldWidget(
+                            labelText: "Name",
                             controller: _userNameController,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
                             validator: _validateUserName,
-                            decoration: InputDecoration(
-                              labelText: 'Name',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
                           ),
                           const SizedBox(height: 16),
                         ],
                         // Email input
-                        TextFormField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                        FormfieldWidget(
+                          labelText: "Email",
                           controller: _emailController,
                           validator: _validateEmail,
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
                         ),
                         const SizedBox(height: 16),
                         // Password input
-                        TextFormField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                        FormfieldWidget(
+                          labelText: "Password",
                           validator: _validatePassword,
                           controller: _passwordController,
                           obscureText: true,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
                         ),
                         const SizedBox(height: 16),
                         // Sign In / Sign Up Button

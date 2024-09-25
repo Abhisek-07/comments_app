@@ -6,7 +6,7 @@ part of 'dashboard_state.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dashboardStateHash() => r'6323217a89b1b262019bb872c2bd79abe7469cef';
+String _$dashboardStateHash() => r'b16c5b1c85f7c4ba5a30718bd5145ede7e5c10f5';
 
 /// See also [DashboardState].
 @ProviderFor(DashboardState)
